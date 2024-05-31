@@ -34,6 +34,12 @@ server(
   {
     port,
     socket: {
+      /**
+       * NOTE:
+       *
+       * This will only work if my pull request to Franciscop server gets accepted.
+       *
+       */
       cors: {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
