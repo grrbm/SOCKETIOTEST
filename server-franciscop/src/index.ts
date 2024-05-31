@@ -4,6 +4,21 @@ const server = require("server");
 const { get, socket } = server.router;
 const { render } = server.reply;
 
+const cors = [
+  (ctx) => header("Access-Control-Allow-Origin", "*"),
+  (ctx) =>
+    header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    ),
+  (ctx) =>
+    header(
+      "Access-Control-Allow-Methods",
+      "GET, PUT, PATCH, POST, DELETE, HEAD, SOCKET"
+    ),
+  (ctx) => (ctx.method.toLowerCase() === "options" ? 200 : false),
+];
+
 const port = 4000;
 // Update everyone with the current user count
 const updateCounter = (ctx) => {
@@ -15,7 +30,7 @@ const sendMessage = (ctx) => {
   ctx.io.emit("message", ctx.data);
 };
 
-server({ port }, [
+server({ port }, cors, [
   get("/", (ctx) => render("index.html")),
   socket("connect", updateCounter),
   socket("disconnect", updateCounter),
