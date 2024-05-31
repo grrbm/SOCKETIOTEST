@@ -30,11 +30,25 @@ const sendMessage = (ctx) => {
   ctx.io.emit("message", ctx.data);
 };
 
-server({ port }, cors, [
-  get("/", (ctx) => render("index.html")),
-  socket("connect", updateCounter),
-  socket("disconnect", updateCounter),
-  socket("message", sendMessage),
-]);
+server(
+  {
+    port,
+    socket: {
+      cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type"],
+        credentials: true,
+      },
+    },
+  },
+  cors,
+  [
+    get("/", (ctx) => render("index.html")),
+    socket("connect", updateCounter),
+    socket("disconnect", updateCounter),
+    socket("message", sendMessage),
+  ]
+);
 
 console.log(`Running on port `, port);
