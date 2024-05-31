@@ -1,5 +1,9 @@
-const greet = (name: string): string => {
-  return `Hello, ${name}!`;
-};
+// Include the server in your file
+const server = require("server");
+const { get, post } = server.router;
 
-console.log(greet("World"));
+// Handle requests to the url "/" ( http://localhost:3000/ )
+server([
+  //@ts-ignore
+  get("/", (ctx) => "Hello world!"),
+]);
