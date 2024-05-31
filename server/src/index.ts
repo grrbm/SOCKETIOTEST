@@ -1,10 +1,30 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import cors from "cors";
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+
+// Configure CORS for Express
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+  })
+);
+
+// Configure CORS for Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+  },
+});
 
 const PORT = process.env.PORT || 4000;
 
