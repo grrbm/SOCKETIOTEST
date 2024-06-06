@@ -27,7 +27,9 @@ const updateCounter = (ctx) => {
 
 // Send the new message to everyone
 const sendMessage = (ctx) => {
-  ctx.io.emit("message", ctx.data);
+  const { room, message } = ctx.data;
+  ctx.io.to(room).emit("message", message);
+  console.log(`Message sent to room ${room}: ${message}`);
 };
 
 server(
@@ -51,9 +53,16 @@ server(
   cors,
   [
     get("/", (ctx) => render("index.html")),
-    socket("connect", updateCounter),
+    socket("connection", updateCounter),
     socket("disconnect", updateCounter),
-    socket("message", sendMessage),
+    socket("send_message", sendMessage),
+    socket("join_room", ({ path, data, socket }) => {
+      const roomName = data;
+      socket.join(roomName, () => {
+        console.log("successfully joined room");
+      });
+      console.log(socket.id + " joined " + roomName);
+    }),
   ]
 );
 
