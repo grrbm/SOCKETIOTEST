@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 
 export default function Home() {
   const [room, setRoom] = useState("");
+  const [currentRoom, setCurrentRoom] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<any>([]);
   const socketRef = useRef<any>(null);
@@ -26,19 +27,23 @@ export default function Home() {
   const joinRoom = () => {
     if (socketRef.current) {
       socketRef.current.emit("join_room", room);
+      setCurrentRoom(room);
+      setMessages([]); // Clear messages when joining a new room
     }
   };
 
   const sendMessage = () => {
     if (socketRef.current) {
-      socketRef.current.emit("send_message", { room, message });
+      socketRef.current.emit("send_message", { room: currentRoom, message });
+      setMessage(""); // Clear the message input after sending
     }
   };
 
   return (
-    <div className="flex justify-center py-20 bg-gray-200 w-full h-full min-w-[100vw] min-h-[100vh]">
+    <div className="flex text-black justify-center py-20 bg-gray-200 w-full h-full min-w-[100vw] min-h-[100vh]">
       <div className="bg-white border border-black flex flex-col w-[500px] h-[500px]">
         <div className="messages p-4 h-full">
+          <h2>Current Room: {currentRoom}</h2>
           <div className="text-black">Messages:</div>
           <div className="h-full">
             {messages.map((msg: any, index: number) => (
