@@ -34,6 +34,17 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("a user connected");
+
+  socket.on("join_room", (room) => {
+    socket.join(room);
+    console.log(`User joined room: ${room}`);
+  });
+
+  socket.on("send_message", ({ room, message }) => {
+    io.to(room).emit("message", message);
+    console.log(`Message sent to room ${room}: ${message}`);
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
