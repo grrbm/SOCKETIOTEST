@@ -32,7 +32,8 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello World</h1>");
 });
 
-app.get("/set-cookie", (req, res) => {
+app.post("/set-cookie", (req, res) => {
+  console.log("set cookie called");
   res.cookie("username", "JohnDoe", {
     maxAge: 900000,
     httpOnly: true,
