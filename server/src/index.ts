@@ -32,6 +32,15 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello World</h1>");
 });
 
+app.get("/set-cookie", (req, res) => {
+  res.cookie("username", "JohnDoe", {
+    maxAge: 900000,
+    httpOnly: true,
+    // secure: true
+  });
+  res.send("Cookie has been set");
+});
+
 io.on("connection", (socket) => {
   console.log("a user connected");
 
