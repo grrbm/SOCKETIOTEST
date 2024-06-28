@@ -5,6 +5,10 @@ const Cookies = () => {
     fetch("http://localhost:4000/set-cookie", {
       method: "POST",
       credentials: "include", // Include credentials (cookies)
+      headers: {
+        "Content-Type": "application/json", // Set the content type to JSON
+      },
+      body: JSON.stringify({ username: "Crazy Username" }),
     })
       .then((response) => response.text())
       .then((data) => {

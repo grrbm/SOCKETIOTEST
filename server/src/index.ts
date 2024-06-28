@@ -6,6 +6,9 @@ import cors from "cors";
 const app = express();
 const server = http.createServer(app);
 
+// Use built-in middleware for parsing JSON bodies
+app.use(express.json()); // Parses JSON bodies
+
 // Configure CORS for Express
 app.use(
   cors({
@@ -34,7 +37,9 @@ app.get("/", (req, res) => {
 
 app.post("/set-cookie", (req, res) => {
   console.log("set cookie called");
-  res.cookie("username", "JohnDoe", {
+  const { username } = req.body;
+  console.log({ username });
+  res.cookie("username", username, {
     maxAge: 900000,
     httpOnly: true,
     // secure: true
