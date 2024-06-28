@@ -8,7 +8,7 @@ const Cookies = () => {
       headers: {
         "Content-Type": "application/json", // Set the content type to JSON
       },
-      body: JSON.stringify({ username: "Another Username" }),
+      body: JSON.stringify({ username: "Subarashi  Username" }),
     })
       .then((response) => response.text())
       .then((data) => {

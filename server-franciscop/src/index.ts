@@ -1,6 +1,7 @@
 //@ts-nocheck
 
 const server = require("server");
+const corsPackage = require("cors");
 const { get, post, socket, error } = server.router;
 const { render, status: serverStatus, header } = server.reply;
 
@@ -12,7 +13,7 @@ const corsWhitelist = [
   "https://coworksurf-git-feature-adding-socketio-coworksurf.vercel.app/",
 ];
 
-const corsExpress = require("cors")({
+const generalCorsOptions = {
   origin: function (origin, callback) {
     console.log("Checking origin", { origin });
     // allow requests with no origin (like mobile apps or curl requests)
@@ -38,11 +39,28 @@ const corsExpress = require("cors")({
     res.set("Access-Control-Allow-Credentials", "true");
     // Add more headers here as needed
   },
-});
+};
+
+const setCookieCorsOptions = {
+  ...generalCorsOptions,
+  credentials: true, // Ensure this is set to true
+  setHeaders: function (res, path, stat) {
+    res.set("Access-Control-Allow-Credentials", "true");
+    // Add more headers here as needed
+  },
+};
+
+const corsMiddleware = (req, res, next) => {
+  if (req.path === "/set-cookie") {
+    corsPackage(setCookieCorsOptions)(req, res, next);
+  } else {
+    corsPackage(generalCorsOptions)(req, res, next);
+  }
+};
 
 // Make the express middleware compatible with server
 //@ts-ignore
-const cors = server.utils.modern(corsExpress);
+const cors = server.utils.modern(corsMiddleware);
 
 const port = 4000;
 // Update everyone with the current user count
@@ -85,15 +103,13 @@ server(
       const { username } = ctx.body;
       console.log({ username });
 
-      ctx.res.header("Access-Control-Allow-Credentials", "true"); // Add this line
-      console.log("got here 1");
-      ctx.res.cookie("username", username, {
-        maxAge: 900000,
-        httpOnly: true,
-        // secure: true
-      });
-      console.log("got here");
-      return { success: true, message: "worked" };
+      return header("Access-Control-Allow-Credentials", "true")
+        .cookie("username", username, {
+          maxAge: 900000,
+          httpOnly: true,
+          // secure: true
+        })
+        .send();
     }),
 
     socket("connection", updateCounter),
